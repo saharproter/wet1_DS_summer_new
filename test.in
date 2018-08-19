@@ -5,6 +5,7 @@ addWorker 3 3
 addWorker 4 4
 addWorker 5 5
 addWorker 6 6
+addWorker 44 44
 addCompany 1
 addCompany 2
 addCompany 3
@@ -17,4 +18,8 @@ getBestWorker -1
 changeRank 1 7
 getBestWorker 1
 getBestWorker -1
-Quit
+adddWorkerToCompany 44 2
+mergeCompanies 2 1 1
+getBestWorker 1
+addWorker 44 44
+addWorker 44 44

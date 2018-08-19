@@ -377,16 +377,17 @@ public:
 
         // insert new merged company
         Companies->Insert(newCompany , compareCompanyIDs());
-
+        newCompany->setBestWorkerID(newCompany->getWorkersByRankTree()->max()->getWorkerID());
+        newCompany->setBestWorkerRank(newCompany->getWorkersByRankTree()->max()->getWorkerRank());
         
         return SUCCESS;
     }
-    Worker* mergeWorkerArr(Worker** arr1 , Worker** arr2 , int n1 , int n2 , Worker** arr3 , int* n3 , const IsLess<Worker>& less , int minRank){
+    void mergeWorkerArr(Worker** arr1 , Worker** arr2 , int n1 , int n2 , Worker** arr3 , int* n3 , const IsLess<Worker>& less , int minRank){
 
         int a=0,b=0,c=0;
         *n3 = 0;
         while(a<n1 && b<n2){
-            if(less(arr2[b] , arr1[a])) {
+            if(!less(arr2[b] , arr1[a])) {
                 if(arr1[a]->getWorkerRank() >= minRank) {
                     Worker *w = new Worker(*(arr1[a++]));
                     arr3[c++] = w;
