@@ -33,7 +33,7 @@ public:
     }
     ~Company() {
         CompanyWorkersByRank->removeAllData();
-        CompanyWorkersByID->removeAllData();
+        //CompanyWorkersByID->removeAllData();
         delete CompanyWorkersByRank;
         delete CompanyWorkersByID;
     }
