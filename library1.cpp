@@ -237,10 +237,6 @@ public:
             return ALLOCATION_ERROR;
         }
 
-        // update best worker
-        bestWorkerID = WorkersByRank->max()->getWorkerID();
-        bestWorkerRank = WorkersByRank->max()->getWorkerRank();
-
         return SUCCESS;
     }
     
@@ -271,18 +267,18 @@ public:
             worker->setCompany(company);
         }
         
-        
-        // Remove worker from previus company and add to the new one.
-        (worker->getCompany())->getWorkersByIDTree()->Remove(worker, compareWorkerIDs());
-        (worker->getCompany())->getWorkersByRankTree()->Remove(worker, compareWorkerRanks());
-        (worker->getCompany())->substructWorker();
-        
-        worker->setCompany(company);
+        else {
+            // Remove worker from previus company and add to the new one.
+            (worker->getCompany())->getWorkersByIDTree()->Remove(worker, compareWorkerIDs());
+            (worker->getCompany())->getWorkersByRankTree()->Remove(worker, compareWorkerRanks());
+            (worker->getCompany())->substructWorker();
 
-        company->getWorkersByIDTree()->Insert(worker, compareWorkerIDs());
-        company->getWorkersByRankTree()->Insert(worker, compareWorkerRanks());
-        company->AddWorker();
-        
+            worker->setCompany(company);
+
+            company->getWorkersByIDTree()->Insert(worker, compareWorkerIDs());
+            company->getWorkersByRankTree()->Insert(worker, compareWorkerRanks());
+            company->AddWorker();
+        }
         //Update company's best workerID and rank.
         company->setBestWorkerID(((company->getWorkersByRankTree())->max())->getWorkerID());
         company->setBestWorkerRank(((company->getWorkersByRankTree())->max())->getWorkerRank());
