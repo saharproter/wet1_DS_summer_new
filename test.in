@@ -1,0 +1,20 @@
+init
+addWorker 1 1
+addWorker 2 2
+addWorker 3 3
+addWorker 4 4
+addWorker 5 5
+addWorker 6 6
+addCompany 1
+addCompany 2
+addCompany 3
+adddWorkerToCompany 1 1
+adddWorkerToCompany 2 1
+adddWorkerToCompany 3 1
+removeWorker 3
+getBestWorker 1
+getBestWorker -1
+changeRank 1 7
+getBestWorker 1
+getBestWorker -1
+Quit
