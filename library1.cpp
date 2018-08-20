@@ -325,7 +325,7 @@ public:
         Worker** t_arr1 , **t_arr2;
         int n1 , n2;
 
-        if ( companyID1 <= 0 || companyID2 <= 0 || minimalRank <= 0){
+        if ( companyID1 <= 0 || companyID2 <= 0 || minimalRank <= 0 || companyID1 == companyID2){
             return INVALID_INPUT;
         }
         
@@ -415,7 +415,7 @@ public:
             }
         }
         while(b < n2) {
-            if(arr2[a]->getWorkerRank() >= minRank) {
+            if(arr2[b]->getWorkerRank() >= minRank) {
                 Worker *w = new Worker(*(arr2[b++]));
                 arr3[c++] = w;
                 (*n3)++;
@@ -428,7 +428,7 @@ public:
     /************************************************************/
     StatusType changeRank(int workerID, int newRank){
         
-        if ( workerID <0 || newRank <= 0){
+        if ( workerID <=0 || newRank <= 0){
             return INVALID_INPUT;
         }
         
