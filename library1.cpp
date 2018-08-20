@@ -659,6 +659,8 @@ StatusType getCompanyWorkersByRank (void *DS, int companyID, int **workers, int 
 /***********************************************************/
 
 void quit(void** DS){
+    if(DS == NULL || *DS == NULL)
+        return;
     DataSturcture** DSnew = (DataSturcture**)DS;
     delete *DSnew;
     *DS = NULL;
