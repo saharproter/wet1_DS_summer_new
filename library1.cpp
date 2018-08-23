@@ -32,7 +32,7 @@ public:
 
     }
     ~Company() {
-        CompanyWorkersByRank->removeAllData();
+        //CompanyWorkersByRank->removeAllData();
         //CompanyWorkersByID->removeAllData();
         delete CompanyWorkersByRank;
         delete CompanyWorkersByID;
@@ -55,20 +55,29 @@ public:
     int getBestWorkerRank(){
         return bestWorkerRank;
     }
-    void setCompanyID(int newID){
-        companyID = newID;
-    }
     void AddWorker(){
         numOfWorkers++;
     }
     void substructWorker(){
         numOfWorkers--;
     }
+    void setCompanyID(int newID){
+        companyID = newID;
+    }
     void setBestWorkerID(int newID){
         bestWorkerID = newID;
     }
     void setBestWorkerRank(int newRank){
         bestWorkerRank = newRank;
+    }
+    void setNumOfWorkers(int n){
+        numOfWorkers = n;
+    }
+    void setWorkerByIDTree(AVLtree<Worker, int>* t){
+        CompanyWorkersByID = t;
+    }
+    void setWorkerByRankTree(AVLtree<Worker, int>* t){
+        CompanyWorkersByRank = t;
     }
 };
 class compareCompanyIDs: public IsLess<Company>{
@@ -95,11 +104,11 @@ class Worker{
     int workerID;
     int rank;
     Company* company;
-    
+
 public:
     Worker(int workerID, int rank, Company* company = NULL) : workerID(workerID), rank(rank), company(company){}
     Worker( const Worker &w) : workerID(w.workerID), rank(w.rank), company(w.company) {}
-    
+
     int getWorkerID() const{
         return workerID;
     }
@@ -156,9 +165,9 @@ class DataSturcture{
     AVLtree<Worker, int>* WorkersByRank;
     int bestWorkerID;
     int bestWorkerRank;
-    
+
 public:
-    
+
     DataSturcture() : bestWorkerID(-1), bestWorkerRank(0){
         Companies = new AVLtree<Company, int>;
         WorkersByID = new AVLtree<Worker, int>;
@@ -166,6 +175,7 @@ public:
     }
     ~DataSturcture(){
         Companies->removeAllData();
+        WorkersByID->removeAllData();
         delete Companies;
         delete WorkersByID;
         delete WorkersByRank;
@@ -179,13 +189,13 @@ public:
     void setBestWorkerID(int newID){
         bestWorkerID = newID;
     }
-    
+
     void setBestWorkerRank(int newRank){
         bestWorkerRank = newRank;
     }
     /************************************************************/
     StatusType addWorker(int workerID, int rank){
-        
+
         if ( workerID <= 0 || rank <= 0){
             return INVALID_INPUT;
         }
@@ -193,18 +203,18 @@ public:
             return FAILURE;
         }
         Worker * worker = new Worker(workerID, rank);
-        
+
         if (worker == NULL)
         {
             return ALLOCATION_ERROR;
         }
-        
+
         StatusType status = WorkersByID->Insert(worker, compareWorkerIDs());
         if ( status != SUCCESS){
             delete worker;
             return ALLOCATION_ERROR;
         }
-        
+
         status = WorkersByRank->Insert(worker, compareWorkerRanks());
         if ( status != SUCCESS){
             delete worker;
@@ -212,25 +222,25 @@ public:
         }
         return SUCCESS;
     }
-    
+
     /************************************************************/
     StatusType addCompany(int companyID){
-        
+
         if (companyID <= 0)
         {
             return INVALID_INPUT;
         }
-        
+
         if (Companies->searchElement(companyID, compareCompaniesByKeyIDs()) != NULL){
             return FAILURE;
         }
         Company * company = new Company(companyID);
-        
+
         if (company == NULL)
         {
             return ALLOCATION_ERROR;
         }
-        
+
         StatusType status = Companies->Insert(company, compareCompanyIDs());
         if ( status != SUCCESS){
             delete company;
@@ -239,26 +249,26 @@ public:
 
         return SUCCESS;
     }
-    
+
     /************************************************************/
     StatusType addworkerToCompany(int workerID, int companyID){
-        
+
         if ( workerID <= 0 || companyID <= 0){
             return INVALID_INPUT;
         }
-        
+
         Company* company = Companies->searchElement(companyID, compareCompaniesByKeyIDs());
-        
+
         if (company == NULL){
             return FAILURE;
         }
-        
+
         Worker* worker = WorkersByID->searchElement(workerID, compareWorkersByKeyIDs());
-        
+
         if (worker == NULL){
             return FAILURE;
         }
-        
+
         // Add worker with no company yet.
         if( worker->getCompany() == NULL){
             company->getWorkersByIDTree()->Insert(worker, compareWorkerIDs());
@@ -266,7 +276,7 @@ public:
             company->AddWorker();
             worker->setCompany(company);
         }
-        
+
         else {
             // Remove worker from previus company and add to the new one.
             (worker->getCompany())->getWorkersByIDTree()->Remove(worker, compareWorkerIDs());
@@ -282,17 +292,17 @@ public:
         //Update company's best workerID and rank.
         company->setBestWorkerID(((company->getWorkersByRankTree())->max())->getWorkerID());
         company->setBestWorkerRank(((company->getWorkersByRankTree())->max())->getWorkerRank());
-        
+
         return SUCCESS;
     }
-    
+
     /************************************************************/
     StatusType removeWorker(int workerID){
-        
+
         if ( workerID <= 0){
             return INVALID_INPUT;
         }
-        
+
         Worker* worker = WorkersByID->searchElement(workerID, compareWorkersByKeyIDs());
         if (worker == NULL){
             return FAILURE;
@@ -306,7 +316,7 @@ public:
         company->getWorkersByIDTree()->Remove(worker, compareWorkerIDs());
         company->getWorkersByRankTree()->Remove(worker, compareWorkerRanks());
         company->substructWorker();
-        
+
         //Update company's best worker.
         if(company->getWorkersByRankTree()->isEmpty()){
             company->setBestWorkerID(-1);
@@ -315,10 +325,10 @@ public:
         }
         company->setBestWorkerID(((company->getWorkersByRankTree())->max())->getWorkerID());
         company->setBestWorkerRank(((company->getWorkersByRankTree())->max())->getWorkerRank());
-        
+
         return SUCCESS;
     }
-    
+
     /************************************************************/
     StatusType mergeCompanies(int companyID1, int companyID2, int minimalRank){
 
@@ -328,7 +338,7 @@ public:
         if ( companyID1 <= 0 || companyID2 <= 0 || minimalRank <= 0 || companyID1 == companyID2){
             return INVALID_INPUT;
         }
-        
+
         // company1 is not found.
         Company* company1 = Companies->searchElement(companyID1, compareCompaniesByKeyIDs());
         if ( company1 == NULL){
@@ -355,27 +365,37 @@ public:
         company2->getWorkersByRankTree()->InorderArray(t_arr2 , &n2);
         mergeWorkerArr(t_arr1 , t_arr2 , n1 , n2 , arrayByRank , &size , compareWorkerRanks() , minimalRank);
 
+        Company *newCompany;
+
+        // set which company remains and removes the other
+        if(n1 > n2 || (n1==n2 && company1->getCompanyID() < company2->getCompanyID())) {
+            newCompany = company1;
+            Companies->Remove(company2 , compareCompanyIDs());
+        }
+        else {
+            newCompany = company2;
+            Companies->Remove(company1, compareCompanyIDs());
+        }
+
+        // set all remaining workers to point merged company
+        for(int i=0;i<size;i++) {
+            arrayById[i]->setCompany(newCompany);
+            arrayByRank[i]->setCompany(newCompany);
+        }
+
         //create 2 new merged ID and Rank trees from arrays
         AVLtree<Worker , int>* workersById = new AVLtree<Worker , int>(arrayById , size);
         AVLtree<Worker , int>* workersByRank = new AVLtree<Worker , int>(arrayByRank , size);
 
-        // create new company
-        Company *newCompany;
-        if(n1 > n2 || (n1==n2 && company1->getCompanyID() < company2->getCompanyID()))
-            newCompany = new Company(company1->getCompanyID() , n1 , workersById , workersByRank , workersById->max()->getWorkerID() , workersById->max()->getWorkerRank());
+        // updating company's workrers trees
+        newCompany->setWorkerByIDTree(workersById);
+        newCompany->setWorkerByRankTree(workersByRank);
+        newCompany->setNumOfWorkers(size);
 
-        else
-            newCompany = new Company(company2->getCompanyID() , n2 , workersById , workersByRank , workersById->max()->getWorkerID() , workersById->max()->getWorkerRank());
-
-        // remove old companies
-        Companies->Remove(company1 , compareCompanyIDs());
-        Companies->Remove(company2 , compareCompanyIDs());
-
-        // insert new merged company
-        Companies->Insert(newCompany , compareCompanyIDs());
+        // updating company's best worker
         newCompany->setBestWorkerID(newCompany->getWorkersByRankTree()->max()->getWorkerID());
         newCompany->setBestWorkerRank(newCompany->getWorkersByRankTree()->max()->getWorkerRank());
-        
+
         return SUCCESS;
     }
     void mergeWorkerArr(Worker** arr1 , Worker** arr2 , int n1 , int n2 , Worker** arr3 , int* n3 , const IsLess<Worker>& less , int minRank){
@@ -385,8 +405,7 @@ public:
         while(a<n1 && b<n2){
             if(!less(arr2[b] , arr1[a])) {
                 if(arr1[a]->getWorkerRank() >= minRank) {
-                    Worker *w = new Worker(*(arr1[a++]));
-                    arr3[c++] = w;
+                    arr3[c++] = arr1[a++];
                     (*n3)++;
                 }else {
                     a++;
@@ -395,8 +414,7 @@ public:
             }
             else {
                 if(arr2[a]->getWorkerRank() >= minRank) {
-                    Worker *w = new Worker(*(arr2[b++]));
-                    arr3[c++] = w;
+                    arr3[c++] = arr2[b++];
                     (*n3)++;
                 } else{
                     b++;
@@ -406,8 +424,7 @@ public:
         }
         while(a < n1) {
             if(arr1[a]->getWorkerRank() >= minRank) {
-                Worker *w = new Worker(*(arr1[a++]));
-                arr3[c++] = w;
+                arr3[c++] = arr1[a++];
                 (*n3)++;
             }else{
                 a++;
@@ -416,8 +433,7 @@ public:
         }
         while(b < n2) {
             if(arr2[b]->getWorkerRank() >= minRank) {
-                Worker *w = new Worker(*(arr2[b++]));
-                arr3[c++] = w;
+                arr3[c++] = arr2[b++];
                 (*n3)++;
             }else{
                 b++;
@@ -427,17 +443,17 @@ public:
     }
     /************************************************************/
     StatusType changeRank(int workerID, int newRank){
-        
+
         if ( workerID <=0 || newRank <= 0){
             return INVALID_INPUT;
         }
-        
+
         Worker* worker = WorkersByID->searchElement(workerID, compareWorkersByKeyIDs());
         if ( worker == NULL ){
             return FAILURE;
         }
         Company* company = Companies->searchElement(worker->getWorkerCompanyID(), compareCompaniesByKeyIDs());
-        
+
         // Remover worker with workerID with old rank.
         WorkersByID->Remove(worker, compareWorkerIDs());
         WorkersByRank->Remove(worker, compareWorkerRanks());
@@ -446,7 +462,7 @@ public:
             company->getWorkersByRankTree()->Remove(worker, compareWorkerRanks());
         }
         worker->setWorkerRank(newRank);
-        
+
         // Insert woker with workerID with new rank.
         WorkersByID->Insert(worker, compareWorkerIDs());
         WorkersByRank->Insert(worker, compareWorkerRanks());
@@ -463,14 +479,14 @@ public:
         bestWorkerRank = WorkersByRank->max()->getWorkerRank();
         return SUCCESS;
     }
-    
+
     /************************************************************/
     StatusType getBestWorker(int companyID, int *workerID){
-        
+
         if ( companyID ==  0 || workerID == NULL){
             return INVALID_INPUT;
         }
-        
+
         if ( companyID < 0){
             if(WorkersByID->isEmpty())
                 *workerID = -1;
@@ -478,29 +494,29 @@ public:
                 *workerID = bestWorkerID;
             return SUCCESS;
         }
-        
+
         // No workers to any company
         if ( Companies->isEmpty()){
             return FAILURE;
         }
-        
+
         Company* company = Companies->searchElement(companyID, compareCompaniesByKeyIDs());
         if ( company == NULL){
             return FAILURE;
         }
-        
+
         if( !(company->getWorkersByIDTree()->isEmpty())){
             *workerID = company->getBestWorkerID();
         }
         else {
             *workerID = -1;
         }
-        
+
         return SUCCESS;
     }
     /************************************************************/
     StatusType getCompanyWorkersByRank (int companyID, int **workers, int *numOfWorkers){
-        
+
         if ( companyID == 0 || workers == NULL || numOfWorkers == NULL){
             return INVALID_INPUT;
         }
@@ -526,7 +542,7 @@ public:
         if ( Companies->isEmpty()){
             return FAILURE;
         }
-        
+
         Company* company = Companies->searchElement(companyID, compareCompaniesByKeyIDs());
         if ( company == NULL){
             return FAILURE;

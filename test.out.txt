@@ -1,0 +1,20 @@
+init done.
+addWorker: INVALID_INPUT
+addWorker: SUCCESS
+addWorker: SUCCESS
+addCompany: SUCCESS
+addworkerToCompany: SUCCESS
+mergeCompanies: INVALID_INPUT
+changeRank: SUCCESS
+getBestWorker: FAILURE
+Most successful worker is: 1
+addCompany: SUCCESS
+addworkerToCompany: SUCCESS
+mergeCompanies: SUCCESS
+changeRank: SUCCESS
+Most successful worker is: 2
+Rank	||	worker
+5		||	1
+7		||	2
+and there are no more workers!
+Quit done.

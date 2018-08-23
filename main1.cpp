@@ -49,13 +49,13 @@ static const char *commandStr[] = {
 		"init",
 		"addWorker",
 		"addCompany",
-		"adddWorkerToCompany",
+		"addworkerToCompany",
 		"removeWorker",
 		"mergeCompanies",
 		"changeRank",
 		"getBestWorker",
-		"getCompanyWorkersByRank ",
-		"Quit" };
+		"getCompanyWorkersByRank",
+		"quit" };
 
 static const char* ReturnValToStr(int val) {
 	switch (val) {
