@@ -408,8 +408,7 @@ public:
                     arr3[c++] = arr1[a++];
                     (*n3)++;
                 }else {
-                    a++;
-                    arr1[a]->setCompany(NULL);
+                    arr1[a++]->setCompany(NULL);
                 }
             }
             else {
@@ -417,8 +416,7 @@ public:
                     arr3[c++] = arr2[b++];
                     (*n3)++;
                 } else{
-                    b++;
-                    arr2[b]->setCompany(NULL);
+                    arr2[b++]->setCompany(NULL);
                 }
             }
         }
@@ -427,8 +425,7 @@ public:
                 arr3[c++] = arr1[a++];
                 (*n3)++;
             }else{
-                a++;
-                arr1[a]->setCompany(NULL);
+                arr1[a++]->setCompany(NULL);
             }
         }
         while(b < n2) {
@@ -436,8 +433,7 @@ public:
                 arr3[c++] = arr2[b++];
                 (*n3)++;
             }else{
-                b++;
-                arr2[b]->setCompany(NULL);
+                arr2[b++]->setCompany(NULL);
             }
         }
     }
@@ -553,7 +549,7 @@ public:
             return SUCCESS;
         }
         Worker** workerArr = NULL;
-        WorkersByRank->InorderArray(workerArr, numOfWorkers);
+        company->getWorkersByRankTree()->InorderArray(workerArr, numOfWorkers);
         (*workers) = (int*)malloc((*numOfWorkers)*sizeof(int));
         if(numOfWorkers != NULL && *numOfWorkers >0 && *workers ==  NULL){
             return ALLOCATION_ERROR;

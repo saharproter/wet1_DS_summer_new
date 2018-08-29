@@ -3,5 +3,5 @@ project(wet1_summer)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main1.cpp library1.h library1.cpp avlTree.h)
+set(SOURCE_FILES main.cpp test_utilities.h library1.h library1.cpp avlTree.h)
 add_executable(wet1_summer ${SOURCE_FILES})
