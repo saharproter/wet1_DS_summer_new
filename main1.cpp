@@ -95,9 +95,7 @@ static bool isInit = false;
 int main(int argc, const char**argv) {
 	char buffer[MAX_STRING_INPUT_SIZE];
 
-	//std::ifstream in("D:\\mivnei\\HW2\\cmake-build-debug\\in2.txt");
-	//std::cin.rdbuf(in.rdbuf());
-	freopen("C:\\Users\\sahar\\ClionProjects\\wet1_DS_summer_new\\test.in","r",stdin);
+	//freopen("C:\\Users\\sahar\\ClionProjects\\wet1_DS_summer_new\\test.in","r",stdin);
 
 	// Reading commands
 	while (fgets(buffer, MAX_STRING_INPUT_SIZE, stdin) != NULL) {

@@ -74,9 +74,11 @@ public:
         numOfWorkers = n;
     }
     void setWorkerByIDTree(AVLtree<Worker, int>* t){
+        delete CompanyWorkersByID;
         CompanyWorkersByID = t;
     }
     void setWorkerByRankTree(AVLtree<Worker, int>* t){
+        delete CompanyWorkersByRank;
         CompanyWorkersByRank = t;
     }
 };
@@ -315,6 +317,7 @@ public:
             return SUCCESS;
         company->getWorkersByIDTree()->Remove(worker, compareWorkerIDs());
         company->getWorkersByRankTree()->Remove(worker, compareWorkerRanks());
+        delete worker;
         company->substructWorker();
 
         //Update company's best worker.
@@ -360,10 +363,16 @@ public:
 
         mergeWorkerArr(t_arr1 , t_arr2 , n1 , n2 , arrayById , &size , compareWorkerIDs() , minimalRank);
 
+        delete[] t_arr1;
+        delete[] t_arr2;
+
         //  merge workersByRank array
         company1->getWorkersByRankTree()->InorderArray(t_arr1 , &n1);
         company2->getWorkersByRankTree()->InorderArray(t_arr2 , &n2);
         mergeWorkerArr(t_arr1 , t_arr2 , n1 , n2 , arrayByRank , &size , compareWorkerRanks() , minimalRank);
+
+        delete[] t_arr1;
+        delete[] t_arr2;
 
         Company *newCompany;
 
@@ -371,10 +380,12 @@ public:
         if(n1 > n2 || (n1==n2 && company1->getCompanyID() < company2->getCompanyID())) {
             newCompany = company1;
             Companies->Remove(company2 , compareCompanyIDs());
+            delete company2;
         }
         else {
             newCompany = company2;
             Companies->Remove(company1, compareCompanyIDs());
+            delete company1;
         }
 
         // set all remaining workers to point merged company
