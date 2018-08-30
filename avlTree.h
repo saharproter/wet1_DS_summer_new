@@ -145,14 +145,17 @@ private:
     void printPreOrder(AVLNode<Data>*) const;
     void printTree(AVLNode<Data>*) const;
     AVLNode<Data>* next(AVLNode<Data>* &current) const;
-    AVLNode<Data>* sortedArrToAVL(Data** elements, int left, int right);
+    //AVLNode<Data>* sortedArrToAVL(Data** elements, int left, int right);
+    AVLNode<Data>* makeEmptyTree(int* size , int temp);
+    void fillTree(AVLNode<Data>* root_t , Data**& elements);
 };
 
 //constructor from sorted array to balanced AVL tree ,
 template<class Data, class Value> AVLtree<Data, Value>::AVLtree(Data **elements , int size) {
-    root = sortedArrToAVL(elements , 0 , size-1);
+    root = makeEmptyTree(&size , size);
+    fillTree(root , elements);
 }
-
+/*
 template<class Data, class Value> AVLNode<Data>* AVLtree<Data, Value>::sortedArrToAVL(Data** elements, int left, int right)
 {
     if (left > right)
@@ -165,6 +168,30 @@ template<class Data, class Value> AVLNode<Data>* AVLtree<Data, Value>::sortedArr
 
     return root;
 }
+*/
+template<class Data, class Value> AVLNode<Data>* AVLtree<Data, Value>::makeEmptyTree(int* size , int temp){
+    if (temp == 0 || *size == 0)
+        return NULL;
+
+    AVLNode<Data> *root_t = new AVLNode<Data>(NULL);
+    (*size)--;
+    root_t->leftSon =  makeEmptyTree(size , temp/2);
+    root_t->rightSon = makeEmptyTree(size , temp/2);
+
+    root_t->BfUpdate();
+    root_t->HeightUpdate();
+
+    return root_t;
+};
+
+template<class Data, class Value> void AVLtree<Data, Value>::fillTree(AVLNode<Data>* root_t , Data**& elements){
+    if (root_t == NULL)
+        return;
+    fillTree(root_t->leftSon , elements);
+    root_t->setData(*elements);
+    elements++;
+    fillTree(root_t->rightSon , elements);
+};
 
 //checks if the tree is empty
 template<class Data, class Value> bool AVLtree<Data, Value>::isEmpty() {
